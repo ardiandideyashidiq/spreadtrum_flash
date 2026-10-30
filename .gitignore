@@ -6,3 +6,6 @@ x64/
 GITVER.h
 .codegraph/
 .reasonix/
+rust_port/target/
+spd_dump
+spd_dump_rs

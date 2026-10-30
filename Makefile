@@ -27,7 +27,7 @@ endif
 
 STRIP := -s
 
-.PHONY: all clean nostrip
+.PHONY: all clean nostrip rust test-rust
 all: clean GITVER.h $(APPNAME)
 
 # Build without the -s (strip) linker flag, keeping debug symbols
@@ -43,3 +43,12 @@ GITVER.h:
 
 $(APPNAME): $(APPNAME).c common.c
 	$(CC) $(STRIP) $(CFLAGS) $^ $(LIBS) -o $@
+
+rust:
+	cargo build --release --manifest-path rust_port/Cargo.toml
+	cp rust_port/target/release/spd_dump_rs $(APPNAME)_rs
+	-which upx >/dev/null 2>&1 && upx --best --lzma -q $(APPNAME)_rs
+test-rust:
+	cargo test --manifest-path rust_port/Cargo.toml
+	cargo clippy --manifest-path rust_port/Cargo.toml --all-targets --all-features -- -D warnings
+	cargo fmt --manifest-path rust_port/Cargo.toml --check
